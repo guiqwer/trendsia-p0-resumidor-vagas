@@ -4,6 +4,7 @@ import sys
 
 import requests
 from dotenv import load_dotenv
+from src.entrada import EntradaVazia, ler_vaga
 
 URL_API = "https://api.anthropic.com/v1/messages"
 VERSAO_API = "2026-10-21"
@@ -46,10 +47,12 @@ def resumir(vaga: str) -> str:
 
 def main() -> None:
     load_dotenv()
-    print("Cole o texto da vaga e termine com Ctrl+D:")
-    vaga = sys.stdin.read()
+    try:
+        vaga = ler_vaga()
+    except EntradaVazia as erro:
+        print(erro, file=sys.stderr)
+        sys.exit(1)
     print(resumir(vaga))
-
 
 if __name__ == "__main__":
     main()
