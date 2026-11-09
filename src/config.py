@@ -23,7 +23,7 @@ def _ler_timeout() -> int:
     except ValueError:
         raise ConfiguracaoInvalida("LLM_TIMEOUT precisa ser número inteiro de segundos") from None
     if timeout <= 0:
-        raise ConfiguracaoInvalida("LL_TIMEOUT precisa ser maior que zero.")
+        raise ConfiguracaoInvalida("LLM_TIMEOUT precisa ser maior que zero.")
     return timeout
 
 def carregar() -> Configuracao:
