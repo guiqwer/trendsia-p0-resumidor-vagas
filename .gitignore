@@ -1,0 +1,14 @@
+# Segredos e configuração local (nunca versionar)
+.env
+
+# Ambiente virtual
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Registros de execução
+logs/
+*.log
