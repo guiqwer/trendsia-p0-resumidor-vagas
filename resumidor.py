@@ -1,5 +1,5 @@
 """Resume uma vaga de emprego colada no terminal, usando a API REST da Anthropic."""
-import os
+from src.config import Configuracao, ConfiguracaoInvalida, carregar
 import sys
 
 import requests
@@ -23,21 +23,21 @@ Pontos de atenção:
 Use só o que está no texto. Se uma informação não aparecer, escreva "não informado"."""
 
 
-def resumir(vaga: str) -> str:
+def resumir(vaga: str, config: Configuracao) -> str:
     resposta = requests.post(
         URL_API,
         headers={
-            "x-api-key": os.environ["LLM_API_KEY"],
+            "x-api-key": config.chave,
             "anthropic-version": VERSAO_API,
             "content-type": "application/json",
         },
         json={
-            "model": os.environ.get("LLM_MODEL", "claude-sonnet-5-5"),
+            "model": config.modelo,
             "max_tokens": 16000,
             "system": INSTRUCOES,
             "messages": [{"role": "user", "content": vaga}],
         },
-        timeout=120,
+        timeout=config.timeout,
     )
     resposta.raise_for_status()
     # A resposta é uma lista de blocos, e nem todo bloco é texto.
@@ -48,11 +48,12 @@ def resumir(vaga: str) -> str:
 def main() -> None:
     load_dotenv()
     try:
+        config = carregar() # Programa vai falhar aqui se não houver chave ou se houver algum erro de configuração 
         vaga = ler_vaga()
-    except EntradaVazia as erro:
+    except (ConfiguracaoInvalida, EntradaVazia) as erro:
         print(erro, file=sys.stderr)
         sys.exit(1)
-    print(resumir(vaga))
+    print(resumir(vaga, config))
 
 if __name__ == "__main__":
     main()
