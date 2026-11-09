@@ -5,22 +5,10 @@ import sys
 import requests
 from dotenv import load_dotenv
 from src.entrada import EntradaVazia, ler_vaga
+from src.pedido import montar_corpo
 
 URL_API = "https://api.anthropic.com/v1/messages"
 VERSAO_API = "2026-10-21"
-
-INSTRUCOES = """Você recebe o texto de uma vaga de emprego em TI e devolve um resumo em português, \
-exatamente neste formato:
-
-Cargo:
-Senioridade:
-Stack obrigatória:
-Stack desejável:
-Modalidade:
-Salário:
-Pontos de atenção:
-
-Use só o que está no texto. Se uma informação não aparecer, escreva "não informado"."""
 
 
 def resumir(vaga: str, config: Configuracao) -> str:
@@ -31,12 +19,7 @@ def resumir(vaga: str, config: Configuracao) -> str:
             "anthropic-version": VERSAO_API,
             "content-type": "application/json",
         },
-        json={
-            "model": config.modelo,
-            "max_tokens": 16000,
-            "system": INSTRUCOES,
-            "messages": [{"role": "user", "content": vaga}],
-        },
+        json=montar_corpo(vaga, config),
         timeout=config.timeout,
     )
     resposta.raise_for_status()
