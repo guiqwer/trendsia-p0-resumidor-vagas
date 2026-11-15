@@ -13,5 +13,6 @@ def validar(texto: str) -> str:
 
 
 def ler_vaga() -> str:
-    print("Cole o texto da vaga e termine com Ctrl+D:")
+    # O aviso vai para o stderr: o stdout fica só com o resumo, inclusive com "> arquivo".
+    print("Cole o texto da vaga e termine com Ctrl+D:", file=sys.stderr)
     return validar(sys.stdin.read())
