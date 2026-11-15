@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass, field
 
 MODELO_PADRAO = "claude-sonnet-5-5"
-TIMOUT_PADRAO = 120
+TIMEOUT_PADRAO = 120
 
 class ConfiguracaoInvalida(Exception):
     """Alguma variável de ambiente está ausente ou com valor inválido."""
@@ -19,7 +19,7 @@ class Configuracao:
 
 def _ler_timeout() -> int:
     try:
-        timeout = int(os.environ.get("LLM_TIMEOUT", TIMOUT_PADRAO))
+        timeout = int(os.environ.get("LLM_TIMEOUT", TIMEOUT_PADRAO))
     except ValueError:
         raise ConfiguracaoInvalida("LLM_TIMEOUT precisa ser número inteiro de segundos") from None
     if timeout <= 0:
