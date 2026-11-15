@@ -1,0 +1,3 @@
+Desenvolvedor Python Pleno - Empresa Fictícia Ltda.
+Trabalho remoto. Requisitos: 3+ anos com Python, Django e PostgreSQL.
+Desejável: Docker e AWS. Salário: R$ 8.000 a R$ 10.000.
