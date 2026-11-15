@@ -7,13 +7,13 @@ from src.cliente import ErroLLM, enviar
 from src.config import Configuracao, ConfiguracaoInvalida, carregar
 from src.entrada import EntradaVazia, ler_vaga
 from src.pedido import montar_corpo
+from src.resposta import extrair_texto
 
 
 def resumir(vaga: str, config: Configuracao) -> str:
-    dados = enviar(montar_corpo(vaga, config), config)
-    # A resposta é uma lista de blocos, e nem todo bloco é texto.
-    blocos = dados["content"]
-    return "".join(b["text"] for b in blocos if b["type"] == "text")
+    corpo = montar_corpo(vaga, config)
+    dados = enviar(corpo, config)
+    return extrair_texto(dados)
 
 
 def main() -> None:
