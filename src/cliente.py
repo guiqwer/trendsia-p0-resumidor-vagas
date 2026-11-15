@@ -40,7 +40,7 @@ def enviar(corpo: dict, config: Configuracao) -> dict:
             timeout=config.timeout,
         )
     except requests.Timeout:
-        raise ErroLLM(f"O LLM não respondeu em {config.timeout} segundos. Tente de novo ou aumente LLM_TIMEOUT no .env.") from None
+        raise ErroLLM(f"O LLM não respondeu no limite de {config.timeout} s. Tente de novo ou aumente LLM_TIMEOUT no .env.") from None
     except requests.RequestException:
         raise ErroLLM("Falha de comunicação com o LLM. Verifique sua conexão.") from None
 
