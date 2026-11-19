@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from src.cliente import ErroLLM, enviar
 from src.config import Configuracao, ConfiguracaoInvalida, carregar
 from src.entrada import EntradaVazia, ler_vaga
+from src import registro
 from src.pedido import montar_corpo
 from src.resposta import extrair_texto
 
@@ -17,6 +18,7 @@ def resumir(vaga: str, config: Configuracao) -> str:
 
 
 def main() -> None:
+    registro.configurar()
     load_dotenv()
     try:
         config = carregar()  # Programa vai falhar aqui se não houver chave ou se houver algum erro de configuração
