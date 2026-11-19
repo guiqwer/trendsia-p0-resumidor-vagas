@@ -12,7 +12,7 @@ def extrair_texto(dados: dict) -> str:
     if motivo == "refusal":
         raise ErroLLM("O modelo se recusou a resumir este texto. Confira se o que foi colado é uma vaga de emprego.")
     if motivo == "max_tokens":
-        raise ErroLLM("A resposta foi cortada pelo limite de tokens antes de terminar.")
+        raise ErroLLM("A resposta foi cortada pelo limite de tokens antes de terminar. Aumente LLM_MAX_TOKENS no .env.")
 
     # A resposta é uma lista de blocos, e nem todo bloco é texto (o raciocínio do modelo vem em blocos "thinking").
     texto = "".join(

@@ -7,7 +7,7 @@ URL_API = "https://api.anthropic.com/v1/messages"
 VERSAO_API = "2026-10-21"
 
 MENSAGENS_POR_STATUS = {
-    400: "A API recusou o pedido. Confira LLM_MODEL e o saldo da conta.",
+    400: "A API recusou o pedido. Confira LLM_MODEL, LLM_MAX_TOKENS e o saldo da conta.",
     401: "Credencial inválida. Confira o valor de LLM_API_KEY no .env.",
     403: "A credencial não tem permissão para usar este modelo.",
     404: "Modelo não encontrado. Confira LLM_MODEL no .env.",
