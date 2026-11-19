@@ -68,6 +68,8 @@ virtual não está ativado: rode `source .venv/bin/activate` e repita. Não use 
 | `LLM_API_KEY` | sim | | Chave da API da Anthropic |
 | `LLM_MODEL` | não | `claude-sonnet-5-5` | Modelo usado |
 | `LLM_TIMEOUT` | não | `120` | Segundos de espera pela resposta |
+| `LLM_MAX_TOKENS` | não | `16000` | Limite de tokens da resposta, contando o raciocínio do modelo. No `claude-sonnet-5-5`, vai até 128000 |
+| `LLM_EFFORT` | não | `high` | Esforço do modelo: `low`, `medium`, `high`, `xhigh` ou `max`. Mais esforço deixa a resposta mais cuidadosa, mais lenta e mais cara |
 
 O `.env` está no `.gitignore` e nunca vai para o repositório.
 
