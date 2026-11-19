@@ -1,0 +1,13 @@
+A Nuvem Fictícia está contratando para o time de IA!
+
+Vaga 1: AI Engineer
+Buscamos alguém com 5 anos ou mais de experiência em Python, que já tenha colocado em produção
+aplicações com LLMs, RAG e APIs REST. Conhecer LangGraph e AWS é um diferencial.
+Remoto, contrato PJ, de R$ 18.000 a R$ 22.000 por mês.
+
+Vaga 2: AI Builder
+Para quem já cria automações com ferramentas no-code (n8n ou Make) e escreve bons prompts.
+Noções de Python são bem-vindas. Primeiro emprego na área? Pode se candidatar.
+Híbrido em São Paulo (3 dias por semana no escritório), CLT, salário a combinar.
+
+Inscrições até 30/11.
