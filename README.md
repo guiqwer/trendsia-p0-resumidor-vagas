@@ -120,6 +120,19 @@ Pontos de atenção: não informado
 Com `exemplos/duas-vagas-ficticias.txt` (AI Engineer e AI Builder no mesmo anúncio), saem dois resumos,
 com a senioridade estimada em cada um: "Sênior (estimada)" e "Júnior (estimada)".
 
+## Logs
+
+Cada chamada ao LLM grava uma linha em `logs/resumidor.log`. A pasta é criada na primeira execução e
+fica fora do Git. A linha traz só metadados: horário, modelo, esforço, tamanho da vaga em caracteres,
+tempo de resposta, status HTTP, id da requisição, motivo de parada e tokens usados. A chave e o texto
+da vaga nunca são gravados.
+
+```text
+2026-11-19 07:01:33,790 INFO modelo=claude-sonnet-5-5 esforco=high entrada_chars=177 latencia_ms=2245 status=200 request_id=req_011Ch... parada=end_turn tokens_entrada=418 tokens_saida=129
+```
+
+As falhas aparecem como `WARNING`, com o status HTTP ou com `falha=timeout` ou `falha=comunicacao`.
+
 ## Testes
 
 Neste nível, todos os testes são **execuções reais** do programa. Os casos 1 a 4 não chegam à API. O caso 3 é uma falha induzida: aponta o proxy para uma porta fechada. Os casos 5 a 9
@@ -168,7 +181,9 @@ src/config.py         leitura e validação das variáveis de ambiente
 src/pedido.py         instruções do resumo e montagem do corpo da requisição
 src/cliente.py        chamada HTTP à API e mensagens por tipo de erro
 src/resposta.py       extração do texto e tratamento de recusa, corte e resposta vazia
+src/registro.py       configuração do log em logs/resumidor.log
 exemplos/             anúncios fictícios para testar
+logs/                 registros de execução (criada ao rodar, fora do Git)
 requirements.txt      dependências, com as versões travadas
 .env.example          modelo das variáveis de ambiente, sem valores reais
 RELATORIO_EXECUCAO.md decisões, testes, falhas e uso de IA
