@@ -30,7 +30,10 @@ de pistas como anos de experiência, e nesse caso vem marcada como "(estimada)".
 
 ## Requisitos
 
-- Python 3.14 (versão usada no desenvolvimento: 3.14.4).
+- Python 3.10 ou mais novo. O projeto foi desenvolvido no 3.14.4, e os testes também passam no 3.10.21 e
+  no 3.12.14.
+- Bibliotecas, com versões travadas no `requirements.txt`: `requests` (chamada HTTP à API),
+  `python-dotenv` (leitura do `.env`), `pytest` e `requests-mock` (testes simulados).
 - Uma chave da API da Anthropic. O projeto usa o modelo `claude-sonnet-5-5`, e o custo das chamadas é
   de quem roda o programa.
 - Acesso à internet.
@@ -46,7 +49,8 @@ pip install -r requirements.txt
 ```
 
 No Ubuntu e no Debian, se `python3 -m venv` disser que falta o `ensurepip`, instale o pacote do venv
-(`sudo apt install python3.14-venv`) e repita o comando.
+da sua versão do Python (`sudo apt install python3-venv`, ou `python3.14-venv` para o 3.14) e repita
+o comando.
 
 Se o `pip` não for encontrado, ou se aparecer `error: externally-managed-environment`, o ambiente
 virtual não está ativado: rode `source .venv/bin/activate` e repita. Não use `--break-system-packages`.
@@ -135,8 +139,29 @@ As falhas aparecem como `WARNING`, com o status HTTP ou com `falha=timeout` ou `
 
 ## Testes
 
-Neste nível, todos os testes são **execuções reais** do programa. Os casos 1 a 4 não chegam à API. O caso 3 é uma falha induzida: aponta o proxy para uma porta fechada. Os casos 5 a 9
-chamam a API da Anthropic. Testes **simulados**, sem chamada real, entram no nível Avançado.
+### Testes simulados (automatizados, sem chamada real)
+
+```bash
+python -m pytest
+```
+
+São 55 testes em `tests/`, um arquivo para cada parte do programa. Eles rodam em menos de um segundo,
+sem internet e sem chave, porque a API é simulada com `requests-mock` no formato de resposta da
+Anthropic. Cobrem:
+
+- entrada vazia e leitura pelo terminal;
+- configuração: valores padrão, valores inválidos, credencial ausente e chave fora do `repr`;
+- corpo do pedido, com modelo, limite de tokens, esforço e instruções;
+- chamada: status 400, 401, 403, 404, 429 e 5xx, tempo esgotado, falha de conexão e corpo que não é
+  JSON;
+- resposta: recusa, resposta cortada, resposta vazia e formato inesperado;
+- log: tem os metadados e não tem a chave nem o texto da vaga;
+- o programa inteiro: resumo no `stdout` e código 1 nos erros, sem traceback.
+
+### Testes reais (o programa de verdade)
+
+Os casos 1 a 4 não chegam à API. O caso 3 é uma falha induzida: aponta o proxy para uma porta fechada.
+Os casos 5 a 10 chamam a API da Anthropic e usam a sua chave.
 
 | # | Situação | Comando | Mensagem esperada (saída 1) |
 |---|---|---|---|
@@ -147,18 +172,16 @@ chamam a API da Anthropic. Testes **simulados**, sem chamada real, entram no ní
 | 5 | Credencial inválida | `LLM_API_KEY=chave-falsa python resumidor.py < exemplos/vaga-ficticia.txt` | Credencial inválida… |
 | 6 | Modelo inexistente | `LLM_MODEL=modelo-inexistente python resumidor.py < exemplos/vaga-ficticia.txt` | Modelo não encontrado… |
 | 7 | Tempo esgotado | `LLM_TIMEOUT=1 python resumidor.py < exemplos/vaga-ficticia.txt` | O LLM não respondeu no limite de 1 s… |
-| 8 | Uma vaga | `python resumidor.py < exemplos/vaga-ficticia.txt` | (saída 0) resumo com os sete campos |
-| 9 | Duas vagas | `python resumidor.py < exemplos/duas-vagas-ficticias.txt` | (saída 0) um resumo por vaga |
+| 8 | Resposta cortada | `LLM_MAX_TOKENS=20 python resumidor.py < exemplos/vaga-ficticia.txt` | A resposta foi cortada pelo limite de tokens… |
+| 9 | Uma vaga | `python resumidor.py < exemplos/vaga-ficticia.txt` | (saída 0) resumo com os sete campos |
+| 10 | Duas vagas | `python resumidor.py < exemplos/duas-vagas-ficticias.txt` | (saída 0) um resumo por vaga |
 
 As variáveis passadas na frente do comando valem só para aquela execução e têm prioridade sobre o
 `.env`. A sintaxe é de terminal Linux ou macOS. Os resultados obtidos estão no
 [relatório](RELATORIO_EXECUCAO.md#3-testes).
 
-Não dá para provocar sob demanda, com a API real, o LLM indisponível (status 5xx), o excesso de
-pedidos (429), a resposta vazia, a recusa, a resposta cortada nem a resposta fora do formato. O
-tratamento desses casos está em `src/cliente.py` e `src/resposta.py`. Eles foram conferidos com
-respostas simuladas fora do repositório (ver o relatório) e viram testes automatizados no nível
-Avançado.
+O LLM indisponível (5xx), o excesso de pedidos (429), a recusa, a resposta vazia e a resposta fora do
+formato não dá para provocar sob demanda com a API real. Por isso eles estão só nos testes simulados.
 
 ## Limitações conhecidas
 
@@ -182,6 +205,8 @@ src/pedido.py         instruções do resumo e montagem do corpo da requisição
 src/cliente.py        chamada HTTP à API e mensagens por tipo de erro
 src/resposta.py       extração do texto e tratamento de recusa, corte e resposta vazia
 src/registro.py       configuração do log em logs/resumidor.log
+tests/                testes simulados, um arquivo por parte do programa
+pytest.ini            configuração do pytest
 exemplos/             anúncios fictícios para testar
 logs/                 registros de execução (criada ao rodar, fora do Git)
 requirements.txt      dependências, com as versões travadas
