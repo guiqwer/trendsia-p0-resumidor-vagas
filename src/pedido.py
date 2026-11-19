@@ -1,8 +1,6 @@
 """Preparo do pedido enviado ao modelo."""
 from src.config import Configuracao
 
-MAX_TOKENS = 16000
-
 INSTRUCOES = """Você recebe o texto de um anúncio de vaga de emprego em TI e devolve um resumo em \
 português, em texto simples, sem markdown e sem comentários antes ou depois.
 
@@ -28,7 +26,8 @@ resumos por uma linha em branco.
 def montar_corpo(vaga: str, config: Configuracao) -> dict:
     return {
         "model": config.modelo,
-        "max_tokens": MAX_TOKENS,
+        "max_tokens": config.max_tokens,
+        "output_config": {"effort": config.esforco},
         "system": INSTRUCOES,
         "messages": [{"role": "user", "content": vaga}],
     }
